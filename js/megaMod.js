@@ -75,8 +75,7 @@ class MegaMod {
 				break;
 			case 'changeFPS':
 				if (value) {
-					this.changeFPS.enableFPS();
-					this.changeFPS.setFPS(extern.modSettingEnabled("changeFPS_slider"));
+					this.changeFPS.initFPS();
 				} else {
 					this.changeFPS.disableFPS();
 				}
@@ -1425,12 +1424,15 @@ class ChangeFPS {
             const setting = window.megaMod.getModSettingById("changeFPS_slider");
             //setting.defaultVal = Math.round(itemRenderer.scene._engine._fps);
             setting.defaultVal = fps;
-            if (extern.modSettingEnabled('changeFPS')) {
-                this.enableFPS();
-                this.setFPS(setting.value);
-            }
+            this.initFPS();
         });
         */ 
+        if (extern.modSettingEnabled("changeFPS")) this.initFPS();
+    }
+
+    initFPS() {
+        this.enableFPS();
+        this.setFPS(window.megaMod.getModSettingById("changeFPS_slider").value);
     }
 
     setFPS(fps) {
