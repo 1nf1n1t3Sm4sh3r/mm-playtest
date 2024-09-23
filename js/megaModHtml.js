@@ -58,7 +58,7 @@ Object.assign(unsafeWindow, {
 	},
 	teamLocs: ['team_blue', 'team_red'],
 	rawPath: "https://raw.githubusercontent.com/1nf1n1t3Sm4sh3r/mm-playtest/main",
-	cdnPath: "https://cdn.jsdelivr.net/gh/1nf1n1t3Sm4sh3r/mm-playtest"
+	cdnPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest"
 });
 unsafeWindow.ChatEventData = {
 	[ChatEvent.joinGame]: {
