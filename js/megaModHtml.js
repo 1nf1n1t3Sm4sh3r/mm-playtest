@@ -57,7 +57,8 @@ Object.assign(unsafeWindow, {
 		 switchTeam: 2,
 	},
 	teamLocs: ['team_blue', 'team_red'],
-	filePath: "https://raw.githubusercontent.com/1nf1n1t3Sm4sh3r/mm-playtest/main"
+	rawPath: "https://raw.githubusercontent.com/1nf1n1t3Sm4sh3r/mm-playtest/main",
+	cdnPath: "https://cdn.jsdelivr.net/gh/1nf1n1t3Sm4sh3r/mm-playtest"
 });
 unsafeWindow.ChatEventData = {
 	[ChatEvent.joinGame]: {
@@ -1128,7 +1129,7 @@ function addHTMLEdits() {
 		`version }}</button> | `,
 		`version }}</button> | 
 		<button class="ss_button_as_text" target="_blank" @click="onChangelogClicked(true)">The MegaMod <i class='fas fa-tools fa-sm'></i></button> | 
-		<button class="ss_button_as_text modServer" target="_blank" @click="onServerClicked"><img src="${filePath}/img/assets/logos/modServer.png" class='serverIcon'></img></button> | `);
+		<button class="ss_button_as_text modServer" target="_blank" @click="onServerClicked"><img src="${rawPath}/img/assets/logos/modServer.png" class='serverIcon'></img></button> | `);
 
 	Object.assign(vueData.changelog, { megaModChangelog: false, showMegaModHistoryBtn: true });
 	vueData.openMegaModInfo = () => {
@@ -1210,7 +1211,7 @@ function addHTMLEdits() {
 		const megaModLogo = document.createElement('img');
 		Object.assign(megaModLogo, {
 			id: "megaModLogo",
-			src: `${filePath}/img/assets/logos/megaMod-${Math.floor(Math.random()*5)}.png`,
+			src: `${rawPath}/img/assets/logos/megaMod-${Math.floor(Math.random()*5)}.png`,
 			style: `
 				width: 19em;
 				display: block;

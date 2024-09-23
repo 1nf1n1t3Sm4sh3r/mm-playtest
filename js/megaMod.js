@@ -1,6 +1,7 @@
 class MegaMod {  
     static fetchJSON(subPath) {
-        return fetch(`${filePath}${subPath}`)
+        if (!subPath.startsWith('http')) subPath = `${rawPath}${subPath}`;
+        return fetch(subPath)
             .then(res => {
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
                 return res.json();
@@ -8,7 +9,7 @@ class MegaMod {
     }
 
     static fetchCSS(subPath) {
-        if (!subPath.startsWith('http')) subPath = `${filePath}${subPath}`;
+        if (!subPath.startsWith('http')) subPath = `${rawPath}${subPath}`;
         return fetch(subPath)
         .then(res => {
             if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
@@ -278,7 +279,7 @@ class MegaMod {
             const sounds = Object.values(BAWK?.sounds || {});
             if (!sounds.length || !sounds[0]?.buffer) return;
             clearInterval(soundsInterval);
-            soundData.forEach(sfx => BAWK.loadSound(`${filePath}/sfx/megaMod/${sfx}.mp3`, sfx));
+            soundData.forEach(sfx => BAWK.loadSound(`${rawPath}/sfx/megaMod/${sfx}.mp3`, sfx));
         }, 250);
     }
 
@@ -445,10 +446,10 @@ class MegaMod {
         // Import Library for sortable tables
         document.head.appendChild(Object.assign(document.createElement('link'), { 
             rel: 'stylesheet', 
-            href: `${filePath}/libs/sortable/sortable.min.css` 
+            href: `${cdnPath}/libs/sortable/sortable.min.css` 
         }));
         document.head.appendChild(Object.assign(document.createElement('script'), { 
-            src: `${filePath}/libs/sortable/sortable.min.js`
+            src: `${cdnPath}/libs/sortable/sortable.min.js`
         }));
         // GIF Library
         document.head.appendChild(Object.assign(document.createElement('script'), { 
@@ -925,13 +926,13 @@ class BetterUI {
 
         const addStyle = (name) => {
             const preload = extern.modSettingEnabled("megaMod_cssPreload");
-            const url = `${filePath}/mods/css/${name}.css`;
+            const url = `/mods/css/${name}.css`;
             const style = document.createElement(preload ? 'style' : 'link');
             document.head.appendChild(style);
             if (preload) {
-                MegaMod.fetchCSS(url).then(css => style.textContent = css);
+                MegaMod.fetchCSS(rawPath + url).then(css => style.textContent = css);
             } else {
-                Object.assign(style, { rel: 'stylesheet', href: url });
+                Object.assign(style, { rel: 'stylesheet', href: (cdnPath + url) });
             }
             return style;
         };
@@ -1221,7 +1222,7 @@ class LegacyMode {
             clearInterval(soundsInterval);
             Promise.all(this.getAllLegacySounds().map(s => {
                 BAWK.sounds[`${s}_Default`] = BAWK.sounds[s];
-                return BAWK.loadSound(`${filePath}/sfx/legacy/${s}.mp3`, `${s}_Legacy`);
+                return BAWK.loadSound(`${rawPath}/sfx/legacy/${s}.mp3`, `${s}_Legacy`);
             })).then(() => {
                 if (extern.modSettingEnabled("legacyMode")) this.switchLegacySounds(extern.modSettingEnabled("legacyMode_sfx"));
             });
@@ -1532,20 +1533,19 @@ class CustomTheme {
     constructor(themes) {
         this.themes = themes;
         this.themes.forEach(theme => {
-            theme.url = theme.url || `${filePath}/themes/css/${theme.id}.css`;
-            if (!theme.url.startsWith('http')) theme.url = `${filePath}/themes/css/${theme.url}.css`;
+            theme.url = theme.url || `/themes/css/${theme.id}.css`;
             const preload = extern.modSettingEnabled("themeManager_preload", true);
             const style = document.createElement(preload ? 'style' : 'link');
             style.id = `themeCSS-${theme.id}`;
             const disabled = !(extern.modSettingEnabled("themeManager") && theme.id === window.megaMod.getModSettingById("themeManager_themeSelect").value);
             if (preload) {
-                MegaMod.fetchCSS(theme.url)
+                MegaMod.fetchCSS(rawPath + theme.url)
                     .then(css => {
                         document.head.appendChild(style).textContent = css;
                         style.disabled = disabled;
                     });
             } else {
-                Object.assign(style, { rel: 'stylesheet', href: theme.url, disabled: disabled });
+                Object.assign(style, { rel: 'stylesheet', href: (cdnPath + theme.url), disabled: disabled });
                 document.head.appendChild(style);
             }
         });
@@ -1575,7 +1575,7 @@ class CustomSkybox {
 			const skyboxData = (skyboxCategory === 'colors') ? this.skyboxes[0] : this.skyboxes[skyboxCategory].find(s => s.id === skybox);
 			let skyboxURL = skyboxData?.path || `${skyboxCategory}/${skybox}`;
 			if (skyboxURL.startsWith('shellshock.io')) skyboxURL = skyboxURL.replace(`shellshock.io`, window.location.origin);
-			if (!skyboxURL.startsWith('http')) skyboxURL = `${filePath}/img/skyboxes/${skyboxURL}`;
+			if (!skyboxURL.startsWith('http')) skyboxURL = `${rawPath}/img/skyboxes/${skyboxURL}`;
 			return skyboxURL;
 		};
         this.onSkyboxCategoryChanged(window.megaMod.getModSettingById('customSkybox_skyboxCategorySelect').value, true);
