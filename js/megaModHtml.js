@@ -1255,7 +1255,7 @@ RegExp.prototype.safeExec = function(src, ids) {
 	const match = this.exec(src);
 	if (!match) {
 		unsafeWindow.megaModErrors.regexErrs.push(...ids);
-		console.error(`MegaMod: Match not found for pattern: ${this}`);
+		console.error(`MegaMod: Exec not found for pattern: ${this}`);
 	}
 	return match?.map((m, i) => i ? m.replace("_", "\\_").replace("$", "\\$") : m);
 };
@@ -1631,7 +1631,7 @@ const editSource = (src) => {
 	let iconVar = new RegExp(`(${v})\\.classList\\.add\\(\\"fab\\"`).safeExec(src, "");
 	if (iconVar?.length > 1) {
 		iconVar = iconVar[1];
-		let nameDivVar = new RegExp(`(${v})\\.style\\.display\\=\\"inline-block\\"`).safeExec(src, "");
+		let nameDivVar = new RegExp(`(${v})\\.style\\.display\\=\\"inline-block\\"(?:\r|\n|.)*\\1\\.style\\.color\\=\\"#ff0\\"`).safeExec(src, "");
 		if (nameDivVar?.length > 1) {
 			nameDivVar = nameDivVar[1];
 			const chatIcon = `(${iconVar}.classList.add({CLASS}, "ss_marginright_xs", "chat-icon"), ${nameDivVar}.appendChild(${iconVar}))`

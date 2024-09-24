@@ -18,8 +18,8 @@ class MegaMod {
     }
 
     constructor(regexErrs, modConflicts) {
-        this.regexErrs = regexErrs;
-        this.modConflicts = modConflicts;
+        this.regexErrs = regexErrs.filter(str => /\w+/.test(str));
+        this.modConflicts = modConflicts.filter(str => /\w+/.test(str));
         this.modErrs = this.regexErrs.concat(this.modConflicts);
     }
 
