@@ -251,7 +251,7 @@
 
 
 	"p_settings_mods_changeFPS_title": "Change FPS",
-	"p_settings_mods_changeFPS_desc": "Allows you to change your FPS! :O<br>NOTE: You may reach a point where your device can't support any higher of a framerate so your FPS will max out.",
+	"p_settings_mods_changeFPS_desc": "Allows you to change your FPS! :O<br>NOTE: This is a bit buggy and you may reach a point where your device can't support any higher of a framerate so your FPS will max out.",
 	"p_settings_mods_changeFPS_slider": "FPS Slider",
 
 
