@@ -75,7 +75,7 @@ class MegaMod {
 				break;
 			case 'changeFPS':
 				if (value) {
-					this.changeFPS.initFPS();
+					this.changeFPS.enableFPS();
 				} else {
 					this.changeFPS.disableFPS();
 				}
@@ -154,7 +154,7 @@ class MegaMod {
 		if (this.isModSetting(id)) this.updateModSetting(id, value);
 		switch (id) {
 			case `changeFPS_slider`:
-				if (extern.modSettingEnabled("changeFPS")) this.changeFPS.setFPS(value);
+				this.changeFPS.setFPS(value);
 				break;
 		}
 		if (id.includes("customSkybox_colorSlider_")) extern.updateSkybox(
@@ -1393,11 +1393,12 @@ class MatchGrenades {
     }
 }
 
+// TODO: Make this less glitchy and unstable! :/
 class ChangeFPS {   
+    static oldRAF = window.requestAnimationFrame;
+
     constructor() {
-        // TODO: Make this mod actually work properly and be less glitchy! >:)
         this.animCallbacks = [];
-        this.oldRAF = window.requestAnimationFrame;
         this.newRAF = (cb) => this.animCallbacks.push(cb);
 
         // Set FPS Default Value
@@ -1424,32 +1425,29 @@ class ChangeFPS {
             const setting = window.megaMod.getModSettingById("changeFPS_slider");
             //setting.defaultVal = Math.round(itemRenderer.scene._engine._fps);
             setting.defaultVal = fps;
-            this.initFPS();
+            this.setFPS(window.megaMod.getModSettingById("changeFPS_slider").value);
         });
         */ 
-        if (extern.modSettingEnabled("changeFPS")) this.initFPS();
-    }
-
-    initFPS() {
-        this.enableFPS();
         this.setFPS(window.megaMod.getModSettingById("changeFPS_slider").value);
     }
 
     setFPS(fps) {
+        this.fps = fps;
+        if (extern.modSettingEnabled("changeFPS")) this.enableFPS();
+    }
+
+    enableFPS() { 
+        window.requestAnimationFrame = this.newRAF; 
         if (this.fpsChangeInterval) clearInterval(this.fpsChangeInterval);
         this.fpsChangeInterval = setInterval(() => {
             const callbacks = [...this.animCallbacks];
             this.animCallbacks.length = 0;
             callbacks.forEach(f => f(document.timeline.currentTime));
-        }, 1000 / fps);
-    }
-
-    enableFPS() { 
-        window.requestAnimationFrame = this.newRAF; 
+        }, 1000 / this.fps);
     }
 
     disableFPS() {
-        window.requestAnimationFrame = this.oldRAF; 
+        window.requestAnimationFrame = ChangeFPS.oldRAF; 
     }
 }
 
@@ -1574,8 +1572,8 @@ class CustomSkybox {
 
         extern.getSkybox = (skybox = window.megaMod.getModSettingById("customSkybox_skyboxSelect").value) => {
 			const skyboxCategory = window.megaMod.getModSettingById("customSkybox_skyboxCategorySelect").value;
-			const skyboxData = (skyboxCategory === 'colors') ? this.skyboxes[0] : this.skyboxes[skyboxCategory].find(s => s.id === skybox);
-			let skyboxURL = skyboxData?.path || `${skyboxCategory}/${skybox}`;
+            if (skyboxCategory === 'colors') return null;
+			let skyboxURL = this.skyboxes[skyboxCategory].find(s => s.id === skybox)?.path || `${skyboxCategory}/${skybox}`;
 			if (skyboxURL.startsWith('shellshock.io')) skyboxURL = skyboxURL.replace(`shellshock.io`, window.location.origin);
 			if (!skyboxURL.startsWith('http')) skyboxURL = `${rawPath}/img/skyboxes/${skyboxURL}`;
 			return skyboxURL;

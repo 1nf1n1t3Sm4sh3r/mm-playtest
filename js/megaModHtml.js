@@ -1425,7 +1425,7 @@ const editSource = (src) => {
 	let skyboxMatch = new RegExp(`\\"img\\/skyboxes\\/\\"\\+(${v})`).safeExec(src, "customSkybox");
 	if (skyboxMatch?.length) {
 		let cubeTextureMatch = new RegExp(`\\.reflectionTexture=new.*?\\)`).safeExec(src, "customSkybox");
-		src = src.safeReplace(skyboxMatch[0], `(extern?.modSettingEnabled?.("customSkybox") ? extern.getSkybox() : ${skyboxMatch[0]})`, "customSkybox");
+		src = src.safeReplace(skyboxMatch[0], `(extern?.modSettingEnabled?.("customSkybox") ? (extern.getSkybox() || ${skyboxMatch[0]})  : ${skyboxMatch[0]})`, "customSkybox");
 		let skyboxVar = new RegExp(`(${v})\\.infiniteDistance\\=\\!0\\;`).safeExec(src, "customSkybox");
 		if (cubeTextureMatch?.length && skyboxVar?.length > 1) {
 			src = src.safeReplace(skyboxVar[0], `${skyboxVar[0]}window.megaMod.setSkybox(${skyboxVar[1]});`, "customSkybox")
