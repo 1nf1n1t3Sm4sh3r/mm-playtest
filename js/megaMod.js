@@ -3303,8 +3303,8 @@ Object.assign(unsafeWindow, {
 		 switchTeam: 2,
 	},
 	teamLocs: ['team_blue', 'team_red'],
-	rawPath: "http://127.0.0.1:5500",
-	cdnPath: "http://127.0.0.1:5500"
+	rawPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest",
+	cdnPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest"
 });
 unsafeWindow.ChatEventData = {
 	[ChatEvent.joinGame]: {
