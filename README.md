@@ -6,6 +6,26 @@
 > Welcome to The MegaMod! This collection of mods is designed to enhance your Shell Shockers experience. From fun features to useful additions that elevate the game's functionality, this culmination of all my mods (with new additions and features), is your one-stop solution!
 
 > For any suggestions or feature requests, join the [Infinite's Shell Mods](https://discord.gg/Cxggadazy4) Discord Server!
+
+## Installation
+To install **The MegaMod** for Shell Shockers, follow these steps:
+
+### Step 1: Install a Userscript Manager
+You'll need a userscript manager to run The MegaMod on your browser. I recommend using one of the following:
+- **[Tampermonkey](https://www.tampermonkey.net/)**
+- **[Greasemonkey](https://www.greasespot.net/)**
+- **[Violentmonkey](https://violentmonkey.github.io/)**
+
+### Step 2: Install The MegaMod Script
+1. After installing the userscript manager, click [here]((/js/script.user.js)) to install **The MegaMod**:
+2. Follow the prompts to add the script to your userscript manager.
+
+### Step 3: Enable the MegaMod
+Once the script is installed, head to [Shell Shockers](https://shellshock.io/) and start playing. The MegaMod will load automatically on game start.
+
+### Step 4: Stay Updated
+The script is set to auto-update and will notify you if your version is outdated. However, you can also manually check for updates by visiting the [MegaMod Playtest GitHub repository](https://github.com/1nf1n1t3Sm4sh3r/mm-playtest).
+
 ## Changelog
 <details>
 <summary>See Changelog</summary>
@@ -13,8 +33,9 @@
 </details>
 
 ## The MegaMod
+### Settings
 <details>
-<summary>MegaMod Settings</summary>
+<summary>See MegaMod Settings</summary>
 
   - **MegaMod UI Sound Effects** - Enables sound effects related to the MegaMod
     - **Specific Sounds**:
@@ -93,7 +114,7 @@ There's a new link added to the footer on the home screen, which opens a changel
 - **Better Inventory**
   <details>
   <summary>More Info</summary>
-    
+
     - __UI Improvements__:
       - Rounded item and weapon select buttons
       - Better **color matching** on existing item theme properties:
