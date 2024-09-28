@@ -3356,7 +3356,7 @@ Object.assign(unsafeWindow, {
 		 switchTeam: 2,
 	},
 	teamLocs: ['team_blue', 'team_red'],
-	rawPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest", // https://1nf1n1t3sm4sh3r.github.io/mm-playtest
+	rawPath: "https://raw.githubusercontent.com/1nf1n1t3Sm4sh3r/mm-playtest/main", // https://raw.githubusercontent.com/1nf1n1t3Sm4sh3r/mm-playtest/main
 	cdnPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest" // https://1nf1n1t3sm4sh3r.github.io/mm-playtest
 });
 unsafeWindow.ChatEventData = {

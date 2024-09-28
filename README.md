@@ -17,7 +17,7 @@ You'll need a userscript manager to run The MegaMod on your browser. I recommend
 - **[Violentmonkey](https://violentmonkey.github.io/)**
 
 ### Step 2: Install The MegaMod Script
-1. After installing the userscript manager, click [here]((/js/script.user.js)) to install **The MegaMod**:
+1. After installing the userscript manager, click [here](/js/script.user.js) to install **The MegaMod**:
 2. Follow the prompts to add the script to your userscript manager.
 
 ### Step 3: Enable the MegaMod
