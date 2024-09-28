@@ -1,4 +1,4 @@
-![The MegaMod](img/docs/other/The%20MegaMod.png)
+![The MegaMod](img/docs/megaMod/The%20MegaMod%20Logo.png)
 # The MegaMod
 [![Shell Mods Discord](https://img.shields.io/discord/1273986972389474374?label=Infinite%27s%20Shell%20Mods%20Server&logo=discord&color=5865F2)](https://discord.gg/Cxggadazy4)
 
@@ -24,7 +24,7 @@ You'll need a userscript manager to run The MegaMod on your browser. I recommend
 Once the script is installed, head to [Shell Shockers](https://shellshock.io/) and start playing. The MegaMod will load automatically on game start.
 
 ### Step 4: Stay Updated
-The script is set to auto-update and will notify you if your version is outdated. However, you can also manually check for updates by visiting the [MegaMod Playtest GitHub repository](https://github.com/1nf1n1t3Sm4sh3r/mm-playtest).
+The script is set to auto-update and will tell you to install the latest update of The MegaMod if your version is outdated.
 
 ## Changelog
 <details>

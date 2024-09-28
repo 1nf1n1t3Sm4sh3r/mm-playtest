@@ -1,12 +1,13 @@
 class MegaMod {   
     static debug = false;
+    static UPDATE_KEY = "megaMod_updated";
 
     static setDebug(debug) {
         this.debug = debug;
     }
 
     static addHTMLEdits() {
-        this.log("addHTMLEdits():", "ADDING HTML EDITS");
+        this.log("addHTMLEdits() -", "Adding HTML Edits");
         // MegaMod UI
         const messages = `
         <div v-show="reloadNeeded && (showModsTab || showSettingsTab)" class="roundme_md mod-msg reload ss_margintop_lg ss_marginbottom_lg">
@@ -428,6 +429,8 @@ class MegaMod {
                             selectSound = (selectedItem.id === 16000 && extern?.modSettingEnabled("legacyMode_sfx_gexplode")) ? "grenade" : selectedItem.item_data.sound;
                             break;
                         case ItemType.Melee:
+                            const premMeleeMeshNames = extern.catalog.melee.filter(item => item.unlock == "premium" || (item.unlock == "purchase" && item.item_data?.tags.includes("Premium"))).map(item => item.item_data.meshName);
+                            if (!premMeleeMeshNames.includes(meshName)) break;
                             const sounds = Object.keys(BAWK.sounds).filter(s => s.startsWith(meshName));
                             selectSound = sounds[Math.floor(Math.random() * sounds.length)];
                             break;
@@ -657,6 +660,28 @@ class MegaMod {
                 <template slot="confirm">{{ loc['ok'] }}</template>
             </small-popup>
         `;
+
+        const updatePopups = `
+            <small-popup id="modUpdatePopup" ref="modUpdatePopup" hide-close="true" @popup-confirm="openMegaModUpdate" class="megamod-popup">
+                <template slot="header">
+                    <h1 class="roundme_sm shadow_blue4 nospace text_white" v-html="loc.megaMod_updatePopup_title"></h1>
+                </template>
+                <template slot="content">
+                    <p v-html="modUpdatePopupContent"></p>
+                </template>
+                <template slot="cancel">{{ loc['megaMod_updatePopup_cancelBtn'] }}</template>
+                <template slot="confirm">{{ loc['megaMod_updatePopup_okBtn'] }}</template>
+            </small-popup>
+            <small-popup id="modUpdatedPopup" ref="modUpdatedPopup" hide-close="true" hide-cancel="true" :overlay-close="true" class="megamod-popup">
+                <template slot="header">
+                    <h1 class="roundme_sm shadow_blue4 nospace text_white" v-html="loc.megaMod_updatedPopup_title"></h1>
+                </template>
+                <template slot="content">
+                    <p v-html="modUpdatedPopupContent"></p>
+                </template>
+                <template slot="confirm">{{ loc['megaMod_updatedPopup_okBtn'] }}</template>
+            </small-popup>
+        `;
     
     
         CompPlayerChallengeList.methods.showChallengeInfo = MEDIATABS.methods.showChallengeInfo = function() {
@@ -691,14 +716,20 @@ class MegaMod {
                 return extern?.account?.challengesClaimed?.filter(val => val == id)?.length;
             }, 
             disableModsPopupContent: "",
-            modErrsPopupContent: ""
+            modErrsPopupContent: "",
+            modUpdatePopupContent: "",
+            modUpdatedPopupContent: "",
+            openMegaModUpdate() {
+                BAWK.play("ui_click");
+                window.open(`${cdnPath}/js/script.user.js`);
+            }
         });
     
         // Add Popups
         const docBody = document.body;
         docBody.innerHTML = docBody.innerHTML.replace(
             `<small-popup id="privacyPopup"`,
-            `${badgePopup} ${challengePopup} ${mapPopup} ${errorPopups} <small-popup id="privacyPopup"`
+            `${badgePopup} ${challengePopup} ${mapPopup} ${errorPopups} ${updatePopups} <small-popup id="privacyPopup"`
         );
     
         // Adjust size of stats container for badges
@@ -1064,7 +1095,7 @@ class MegaMod {
     
         Object.assign(vueData.changelog, { megaModChangelog: false, showMegaModHistoryBtn: true });
         vueData.openMegaModInfo = () => {
-            open('https://github.com/1nf1n1t3Sm4sh3r/mm-playtest/blob/main/README.md', '_blank').focus();
+            open('https://1nf1n1t3sm4sh3r.github.io/mm-playtest/', '_blank').focus();
             BAWK.play("ui_click");
         };
     
@@ -1159,7 +1190,7 @@ class MegaMod {
     }
 
     static editSource(src) {
-        this.log("editSource():", "EDITING SOURCE");
+        this.log("editSource() -", "EDITING SOURCE");
         // Minified Variable Regex
         const v = `[a-zA-Z_$][a-zA-Z0-9_$]*`;
     
@@ -1216,7 +1247,7 @@ class MegaMod {
                                     if (g !== ${itemManagerClass}.currentGrenadeMesh) {
                                         ${itemManagerClass}.currentGrenadeMesh = g;
                                         this.updateGrenades();
-                                        //MegaMod.log("matchGrenades - updateGrenades():", "Pickup Grenade Updated to " + ${itemManagerClass}.currentGrenadeMesh);
+                                        //MegaMod.log("matchGrenades: updateGrenades() -", "Pickup Grenade Updated to " + ${itemManagerClass}.currentGrenadeMesh);
                                     }
                                 },
                                 ${itemManagerClass}.getCurrentGrenadeMesh = function() {
@@ -1551,8 +1582,9 @@ class MegaMod {
 
     static log(message, ...details) {
         if (!this.debug) return;
+        
         console.log(
-            "%c%s %c%s",
+            "%c%s%c%s",
             `color: #0a1633; font-weight: bold; background: #1795d2; padding: 2px 6px; border-radius: 5px; margin-right: 5px;`,
             `The MegaMod 🛠️`,
             "font-weight: bold;",
@@ -1565,7 +1597,7 @@ class MegaMod {
         if (!this.debug) return;
         
         console.error(
-            "%c%s %c%s",
+            "%c%s%c%s",
             `color: #0a1633; font-weight: bold; background: #1795d2; padding: 2px 6px; border-radius: 5px; margin-right: 5px;`,
             `The MegaMod 🛠️`,
             "font-weight: bold;",
@@ -1602,21 +1634,19 @@ class MegaMod {
     }
 
     addRegexErrId(id) {
-        if (id) {
-            this.regexErrs.push(id);
-            MegaMod.log("Mod Error:", id);
-        }
+        if (!id) return;
+        this.regexErrs.push(id);
+        MegaMod.log("Mod Error:", id);
     }
 
     addModConflictId(id) {
-        if (id) {
-            this.modConflicts.push(id);
-            MegaMod.log("Mod Conflict:", id);
-        }
+        if (!id) return;
+        this.modConflicts.push(id);
+        MegaMod.log("Mod Conflict:", id);
     }
 
     setModLoc(callback) {
-        MegaMod.log("setModLoc()", "Setting mod loc");
+        MegaMod.log("setModLoc() -", "Setting mod loc");
 
 		Object.assign(vueData.loc, this.loc);
 		vueData.loc.megaMod_betterUI_mapPopup_desc = vueData.loc.megaMod_betterUI_mapPopup_desc.format(vueData.maps.filter(m => m.availability === "both").length);
@@ -1632,7 +1662,7 @@ class MegaMod {
 	}
 
 	getModSettingById(id) {
-		return this.extractSettings(vueApp?.settingsUi?.modSettings || []).find(m => m.id === id);
+		return this.extractSettings(vueApp?.settingsUi?.modSettings || []).find(setting => setting.id === id);
 	}
 
 	isModSetting(id) {
@@ -1790,7 +1820,7 @@ class MegaMod {
 	}
 
     addSettingsHooks() {
-        MegaMod.log("addSettingsHooks()", "Adding settings hooks");
+        MegaMod.log("addSettingsHooks() -", "Adding settings hooks");
 
         const oldLocFunc = vueApp.setLocData;
         vueApp.setLocData = function(...args) {
@@ -1824,7 +1854,7 @@ class MegaMod {
     }
 
     addKeydownEL() {
-        MegaMod.log("addKeydownEL()", "Adding keydown EventListener");
+        MegaMod.log("addKeydownEL() -", "Adding keydown EventListener");
 
         const hideHUDErr = ["hideHUD", "hideHUD_keybind"].some(settingId => this.modErrs.includes(settingId));
         const freezeErr = ["specTweaks", "specTweaks_freezeKeybind"].some(settingId => this.modErrs.includes(settingId));
@@ -1861,7 +1891,7 @@ class MegaMod {
     }
 
     addExternFuncs() {
-        MegaMod.log("addExternFuncs()", "Adding extern functions");
+        MegaMod.log("addExternFuncs() -", "Adding extern functions");
 
         Object.assign(extern, {
             modSettingEnabled: (id, ignoreParent) => {
@@ -1875,7 +1905,7 @@ class MegaMod {
     }
 
     addSounds(soundData) {
-        MegaMod.log("addSounds()", `Adding ${soundData.length} sounds: ` + soundData.join(", "));
+        MegaMod.log(`addSounds() - Adding ${soundData.length} sounds: `, soundData.join(", "));
 
         const soundsInterval = setInterval(() => {
             const sounds = Object.values(BAWK?.sounds || {});
@@ -1886,7 +1916,7 @@ class MegaMod {
     }
 
     addChangelog() {
-        MegaMod.log("addChangelog()", "Adding changelog");
+        MegaMod.log("addChangelog() -", "Adding changelog");
 
         MegaMod.fetchJSON('/data/changelog.json').then(data => vueData.changelog.megaMod = data);
         Object.assign(vueApp, {
@@ -1927,7 +1957,7 @@ class MegaMod {
     }
 
     addAllModFunctions() {
-        MegaMod.log("addAllModFunctions()", "Adding all mod functions");
+        MegaMod.log("addAllModFunctions() -", "Adding all mod functions");
 
         this.spectateTweaks = new SpectateTweaks();
         if (!this.modErrs.includes("matchGrenades")) this.matchGrenades = new MatchGrenades();
@@ -1978,7 +2008,7 @@ class MegaMod {
     }
 
     checkModErrors() {
-        MegaMod.log("manageModErrors()", "Checking mod errors");
+        MegaMod.log("checkModErrors() -", "Checking mod errors");
 
         const checkDefined = (vars) => vars.some(variable => { 
             try { 
@@ -2023,8 +2053,30 @@ class MegaMod {
         });
     }
 
+    checkForUpdate() {
+        MegaMod.log("checkForUpdate() -", "Checking if update available for The MegaMod");
+
+        fetch(`${cdnPath}/js/script.meta.js`, { cache: 'no-cache' })
+            .then(res => res.text())
+            .then(meta => {
+                const remoteVersion = /@version\s+([^\s]+)/.exec(meta)?.[1];
+                const localVersion = GM_info.script.version;
+                MegaMod.log("Current (Local) Version:", localVersion);
+                MegaMod.log("Latest (Remote) Version:", remoteVersion);
+                if (remoteVersion !== localVersion) {
+                    vueData.modUpdatePopupContent = vueData.loc['megaMod_updatePopup_desc'].format(remoteVersion);
+                    vueApp.$refs.modUpdatePopup.show();
+                    localStorage.setItem(MegaMod.UPDATE_KEY, 'true');
+                } else if (localStorage.getItem(MegaMod.UPDATE_KEY)) {
+                    vueData.modUpdatedPopupContent = vueData.loc['megaMod_updatedPopup_desc'].format(localVersion);
+                    vueApp.$refs.modUpdatedPopup.show();
+                    localStorage.removeItem(MegaMod.UPDATE_KEY);
+                }
+            });
+    }
+
     showModErrorPopup() {
-        MegaMod.log("showModErrorPopup()", "Checking whether to show Mod Error popups");
+        MegaMod.log("showModErrorPopup() -", "Checking whether to show Mod Error popups");
 
         const getModNames = (arr) => {
             const getModName = (id) => {
@@ -2057,7 +2109,7 @@ class MegaMod {
     }
 
     importLibs() {
-        MegaMod.log("importLibs()", "Importing libraries");
+        MegaMod.log("importLibs() -", "Importing libraries");
 
         // Import Library for sortable tables
         document.head.appendChild(Object.assign(document.createElement('link'), { 
@@ -2075,8 +2127,9 @@ class MegaMod {
 
     init(settings) {
         vueData.settingsUi.modSettings = settings;
-        this.checkModErrors();
         this.setModLoc();
+        this.checkModErrors();
+        this.checkForUpdate();
         this.addChangelog();
         this.importLibs();
         this.addSettingsHooks();
@@ -2091,7 +2144,7 @@ class MegaMod {
     }
 
     start() {
-        MegaMod.log("start()", "Starting The MegaMod");
+        MegaMod.log("start() -", "Starting The MegaMod");
         MegaMod.addHTMLEdits();
 
         // localStore Upgrades
@@ -2573,7 +2626,7 @@ class BetterUI {
     }
 
     initProfileBadges(badgeData) {
-        MegaMod.log("Better UI", "Initializing Profile Badges");
+        MegaMod.log("Better UI:", "Initializing Profile Badges");
 
         this.badgeData = badgeData;
         const oldSwitchToProfileUi = vueApp.switchToProfileUi;
@@ -3028,7 +3081,7 @@ class MatchGrenades {
     }
 }
 
-// TODO: Make this less glitchy and unstable! :/
+// TODO: Make this less glitchy :(
 class ChangeFPS {   
     static oldRAF = unsafeWindow.requestAnimationFrame;
 
@@ -3303,8 +3356,8 @@ Object.assign(unsafeWindow, {
 		 switchTeam: 2,
 	},
 	teamLocs: ['team_blue', 'team_red'],
-	rawPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest",
-	cdnPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest"
+	rawPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest", // https://1nf1n1t3sm4sh3r.github.io/mm-playtest
+	cdnPath: "https://1nf1n1t3sm4sh3r.github.io/mm-playtest" // https://1nf1n1t3sm4sh3r.github.io/mm-playtest
 });
 unsafeWindow.ChatEventData = {
 	[ChatEvent.joinGame]: {

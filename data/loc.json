@@ -16,6 +16,14 @@
 	"megaMod_modErrsPopup_title": "Uh Oh! Some Mods Broke...",
 	"megaMod_modErrsPopup_desc": "There was an error while starting The MegaMod!<br>Certain mods may not show up or work correctly.<h3>Affected Mods:</h3>{0}",
 
+	"megaMod_updatePopup_title": "New Update Available!",
+	"megaMod_updatePopup_desc": "<br>A new version of The MegaMod is available!<br><br>Please click \"Gimme Update!\" to install version {0} so that you don't miss out on the latest features and bugfixes!",
+	"megaMod_updatePopup_cancelBtn": "Nah :(",
+	"megaMod_updatePopup_okBtn": "Gimme Update!",
+	"megaMod_updatedPopup_title": "Updated Installed!",
+	"megaMod_updatedPopup_desc": "<br>The MegaMod has been updated to version {0}!<br><br>Thanks for installing the update and enjoy your enhanced Shell Shockers experience with the latest version of The MegaMod!",
+	"megaMod_updatedPopup_okBtn": "Poggers!",
+
 	"p_settings_mods_megaMod_title": "MegaMod Settings",
 	"p_settings_mods_megaMod_desc": "Here's where you can change settings for the MegaMod itself.",
 	"p_settings_mods_megaMod_sfx": "MegaMod UI Sound Effects",
