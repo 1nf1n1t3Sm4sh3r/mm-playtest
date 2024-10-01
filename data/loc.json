@@ -23,6 +23,8 @@
 	"megaMod_updatedPopup_title": "Updated Installed!",
 	"megaMod_updatedPopup_desc": "<br>The MegaMod has been updated to version {0}!<br><br>Thanks for installing the update and enjoy your enhanced Shell Shockers experience with the latest version of The MegaMod!",
 	"megaMod_updatedPopup_okBtn": "Poggers!",
+	"megaMod_updatePopup_notesTitle": "Update Notes",
+	"megaMod_updatePopup_notesDesc": "<ul><li>Testing update feature</li><li>Tweaked MegaMod Initialization - should be more reliable now</li><li>Added some UI optimization</li></ul>",
 
 	"p_settings_mods_megaMod_title": "MegaMod Settings",
 	"p_settings_mods_megaMod_desc": "Here's where you can change settings for the MegaMod itself.",

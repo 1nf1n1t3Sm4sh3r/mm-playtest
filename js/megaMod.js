@@ -678,6 +678,8 @@ class MegaMod {
                 </template>
                 <template slot="content">
                     <p v-html="modUpdatedPopupContent"></p>
+                    <h3>{{ loc['megaMod_updatePopup_notesTitle'] }}</h3>
+                    <div class="changelog_content roundme_md" v-html="loc.megaMod_updatePopup_notesDesc"></div>
                 </template>
                 <template slot="confirm">{{ loc['megaMod_updatedPopup_okBtn'] }}</template>
             </small-popup>
@@ -1190,7 +1192,7 @@ class MegaMod {
     }
 
     static editSource(src) {
-        this.log("editSource() -", "EDITING SOURCE");
+        this.log("editSource() -", "Editing shellshock.js");
         // Minified Variable Regex
         const v = `[a-zA-Z_$][a-zA-Z0-9_$]*`;
     
@@ -1631,6 +1633,19 @@ class MegaMod {
     constructor() {
         this.regexErrs = [];
         this.modConflicts = [];
+        // This doesn't work 100% of the time >:(
+        switch(document.readyState) {
+            case "loading": 
+                document.addEventListener("DOMContentLoaded", this.start.bind(this));
+                break;
+            case "interactive": 
+            case "complete": 
+                this.start();
+                break;
+            default:
+                window.addEventListener("load", this.start.bind(this));
+                break;
+        }
     }
 
     addRegexErrId(id) {
@@ -1905,7 +1920,7 @@ class MegaMod {
     }
 
     addSounds(soundData) {
-        MegaMod.log(`addSounds() - Adding ${soundData.length} sounds: `, soundData.join(", "));
+        MegaMod.log(`addSounds() - Adding ${soundData.length} sounds:`, soundData.join(", "));
 
         const soundsInterval = setInterval(() => {
             const sounds = Object.values(BAWK?.sounds || {});
@@ -2536,6 +2551,34 @@ class BetterUI {
             }
         });
 
+        // Create 'on-visible' Vue directive
+        Vue.directive('on-visible', {
+            inserted: (el, binding) => {
+                const observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) binding.value();
+                });
+                observer.observe(el);
+            },
+            unbind: (el) => { if (el._observer) el._observer.disconnect(); }
+        });
+
+        comp_item.mounted = function() {
+            this.itemHightlightedOrder();
+            if (!extern.modSettingEnabled("betterUI_inventory")) this.prepareItem();
+        };
+
+        // Moved mounted() functionality to a new setupItem() function
+        comp_item.methods.setupItem = function() {
+            if (!extern.modSettingEnabled("betterUI_inventory")) return;
+            if (!this.renderDone) this.prepareItem();
+        }
+
+        // Links the newly created setupItem() function to the observe-visibility directive
+        const itemTemplate = document.getElementById("item-template");
+        itemTemplate.innerHTML = itemTemplate.innerHTML.replace(
+            'v-if="active"', 'v-if="active" v-on-visible="setupItem"'
+        );
+
         // Better Inventory - Modify Item Sorting (Order)
         // Premium --> VIP --> Bundle --> Merch --> Drops --> Yolker --> League --> Notif --> Egglite --> Promo --> Event --> Social --> Default/Legacy --> Limited --> Creator --> Shop
         comp_item_grid.computed.itemsSorted = function() {
@@ -2605,7 +2648,7 @@ class BetterUI {
             const style = document.createElement(preload ? 'style' : 'link');
             document.head.appendChild(style);
             if (preload) {
-                MegaMod.fetchCSS(rawPath + url).then(css => style.textContent = css);
+                MegaMod.fetchCSS(url).then(css => style.textContent = css);
             } else {
                 Object.assign(style, { rel: 'stylesheet', href: (cdnPath + url) });
             }
@@ -3233,7 +3276,7 @@ class CustomTheme {
             style.id = `themeCSS-${theme.id}`;
             const disabled = !(extern.modSettingEnabled("themeManager") && theme.id === unsafeWindow.megaMod.getModSettingById("themeManager_themeSelect").value);
             if (preload) {
-                MegaMod.fetchCSS(rawPath + theme.url)
+                MegaMod.fetchCSS(theme.url)
                     .then(css => {
                         document.head.appendChild(style).textContent = css;
                         style.disabled = disabled;
@@ -3409,9 +3452,3 @@ Object.defineProperty(XMLHttpRequest.prototype, 'response', {
 
 MegaMod.setDebug(true);
 MegaMod.log("Script Loaded:", `Page Status - ${document.readyState}`);
-
-if (document.readyState === "loading") {
-    document.addEventListener("readystatechange", () => { if(document.readyState == "interactive") unsafeWindow.megaMod.start(); });
-} else {
-    unsafeWindow.megaMod.start();
-}

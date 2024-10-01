@@ -130,6 +130,7 @@ There's a new link added to the footer on the home screen, which opens a changel
         - Weapon skin buttons could be deselected
         - Photobooth wasn't updating pistol when switching main weapon class
       - Fixed wonky item banners for items showing in bundle popup
+      - Optimization: Inventory Item Images now load when the item is displayed rather than all at once
     - __New Item Themes__:
       - ``Bundle`` - Items available through bundles only
       - ``Limited`` - Limited-time items (in "Limited Edition" shop section)
